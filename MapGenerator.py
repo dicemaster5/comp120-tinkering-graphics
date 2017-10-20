@@ -29,21 +29,17 @@ def ReadAndPrintMapMatrix():
     for row_num, row_list in enumerate(mapMatrix):
         for tile_num in enumerate(row_list):
             return tile_num[1]
-
-#the map generator, this will take a random image from
-#the tiles list and blit it in the game window every 64 pixels on the x and y axis
+"""
+the map generator, this will take a random image from
+the tiles list and blit it in the game window every 64 pixels on the x and y axis
+"""
 def GenerateRandomMap():
-    x=0
-    y=0
     for x in range(0,game_window_width,64):
         for y in range(0,game_window_height,64):
             randomr = random.randrange(25)
             number = ReadAndPrintMapMatrix()
             load_tile = pygame.image.load(list_of_tiles[number])
             GameWindow.blit(load_tile, (x,y))
-            x+=64
-        y+=64
-        x=0
 
 GenerateRandomMap()
 print list_of_tiles
