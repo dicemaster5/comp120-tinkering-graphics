@@ -4,7 +4,7 @@ import numpy
 import pygame
 
 #Variables to set the width and height of the game window
-game_window_width = 640
+game_window_width = 1280
 game_window_height = 640
 
 #The game window itself
@@ -43,61 +43,37 @@ tiles on the game window.
 def ReadAndPrintMapMatrix():
     Pos_X = 0
     Pos_Y = 0
-    mapMatrix = numpy.random.randint(9, size=(10, 10))
-    print mapMatrix
+    mapMatrix = numpy.random.randint(9, size=(game_window_height / 64, game_window_width / 64))
 
+    #the rules
     for row_num, row_list in enumerate(mapMatrix):
         for tile_num in enumerate(row_list):
+
+            connectingTopTiles = [1, 3, 4]
+            topConnectorTiles = [1, 5]
+
+            connectingLeftTiles = [2, 3, 5]
+            leftConnectorTiles = [2, 4]
+
+            Neutrals = [0, 7, 8]
+
             tile_Above = (row_num -1, tile_num[0])
             tile_Left = (row_num,tile_num[0] -1)
             curentPos = (row_num,tile_num[0])
 
-            #Rules for each tile
-            if mapMatrix.item(tile_Above) == 1:
-                mapMatrix.itemset(curentPos, random.choice([5,6]))
+            if mapMatrix.item(tile_Above) in connectingTopTiles and mapMatrix.item(tile_Left) in connectingLeftTiles:
+                mapMatrix.itemset(curentPos, 6)
 
-            elif mapMatrix.item(tile_Above) == 2:
-                mapMatrix.itemset(curentPos, random.choice([0,2,3,4,7,8]))
+            elif mapMatrix.item(tile_Above) not in connectingTopTiles and mapMatrix.item(tile_Left) in connectingLeftTiles:
+                mapMatrix.itemset(curentPos, random.choice(leftConnectorTiles))
 
-            elif mapMatrix.item(tile_Above) == 3:
-                mapMatrix.itemset(curentPos, random.choice([1,5,6]))
+            elif mapMatrix.item(tile_Above) in connectingTopTiles and mapMatrix.item(tile_Left) not in connectingLeftTiles:
+                mapMatrix.itemset(curentPos, random.choice(topConnectorTiles))
 
-            elif mapMatrix.item(tile_Above) == 4:
-                mapMatrix.itemset(curentPos, random.choice([1,5,6]))
+            else:
+                mapMatrix.itemset(curentPos, random.choice(Neutrals))
 
-            elif mapMatrix.item(tile_Above) == 5:
-                mapMatrix.itemset(curentPos, random.choice([0,1,3,4,7,8]))
-
-            elif mapMatrix.item(tile_Above) == 6:
-                mapMatrix.itemset(curentPos, random.choice([2,3,4,7,8,0]))
-
-            elif mapMatrix.item(tile_Above) == 7 or 8:
-                mapMatrix.itemset(curentPos, random.choice([0,2,5,6,7,8]))
-
-            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-
-            elif mapMatrix.item(tile_Left) == 1:
-                mapMatrix.itemset(curentPos, random.choice([1,3,5,7,8]))
-
-            elif mapMatrix.item(tile_Left) == 2:
-                mapMatrix.itemset(curentPos, random.choice([6,4]))
-
-            elif mapMatrix.item(tile_Left) == 3:
-                mapMatrix.itemset(curentPos, random.choice([2,6,4]))
-
-            elif mapMatrix.item(tile_Left) == 4:
-                mapMatrix.itemset(curentPos, random.choice([0,1,3,5,7,8]))
-
-            elif mapMatrix.item(tile_Left) == 5:
-                mapMatrix.itemset(curentPos, random.choice([6,4]))
-
-            elif mapMatrix.item(tile_Left) == 6:
-                mapMatrix.itemset(curentPos, random.choice([7,8,0]))
-
-            elif mapMatrix.item(tile_Left) == 7 or 8:
-                mapMatrix.itemset(curentPos, random.choice([0,1,4,6,7,8]))
-
-
+    #blits to the screen the new random matrix with rules
     for row_num, row_list in enumerate(mapMatrix):
         for tile_num in enumerate(row_list):
             load_tile = pygame.image.load(list_of_tiles[tile_num[1]])
