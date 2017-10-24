@@ -4,15 +4,17 @@ import numpy
 import pygame
 
 #Variables to set the width and height of the game window
-game_window_width = 1280
-game_window_height = 640
+game_window_width = 64 * 20
+game_window_height = 64 * 12
 
 #The game window itself
 GameWindow = pygame.display.set_mode((game_window_width,game_window_height))
 
-#List for the tiles list in the tiles folder
+#Array for the tiles list in the tiles folder
 list_of_tiles = []
-mapMatrix = []
+
+#the map matrix array
+map_Matrix = []
 
 #for loop to take each tile image from the tiles folder and put them in the tile list
 for root, dirs, files in os.walk('TilesToBeUsed'):
@@ -20,61 +22,52 @@ for root, dirs, files in os.walk('TilesToBeUsed'):
         if file.endswith('png'):
             list_of_tiles.append(os.path.join(root,file))
 
-grass_tile = list_of_tiles[0]
-path_tiles = list_of_tiles[1:6]
-tree_tiles = list_of_tiles[7:8]
-#water_tile = list_of_tiles[23]
-
-"""
-The Old Random map generator, this will take a random image from the tiles
-list and blit it in the game window every 64 pixels on the x and y axis.
-"""
-def GenerateRandomMap():
-    for x in range(0,game_window_width,64):
-        for y in range(0,game_window_height,64):
-            randomr = random.randrange(9)
-            load_tile = pygame.image.load(list_of_tiles[randomr])
-            GameWindow.blit(load_tile, (x,y))
-
 """
 New map generator, this one works by using a matrix to define where it should place the
 tiles on the game window.
 """
-def ReadAndPrintMapMatrix():
+def GenerateRandomMap():
+    #Position X and Y on the game window
     Pos_X = 0
     Pos_Y = 0
-    mapMatrix = numpy.random.randint(9, size=(game_window_height / 64, game_window_width / 64))
 
-    #the rules
-    for row_num, row_list in enumerate(mapMatrix):
+    #This creates a random map matrix using the numpy array library
+    map_Matrix = numpy.random.randint(11, size=(game_window_height / 64, game_window_width / 64))
+
+    """
+    The Tile rules.
+    This works by checking the tile above and to the left of 
+    the current tile and then deciding on what tile to place down
+    """
+    for row_num, row_list in enumerate(map_Matrix):
         for tile_num in enumerate(row_list):
 
-            connectingTopTiles = [1, 3, 4]
-            topConnectorTiles = [1, 5]
+            connecting_Top_Tiles = [1, 3, 4]
+            top_Connector_Tiles = [1, 5]
 
-            connectingLeftTiles = [2, 3, 5]
-            leftConnectorTiles = [2, 4]
+            connecting_Left_Tiles = [2, 3, 5]
+            left_Connector_Tiles = [2, 4]
 
-            Neutrals = [0, 7, 8]
+            neutral_Tiles = [0, 7, 8, 3, 9, 10]
 
             tile_Above = (row_num -1, tile_num[0])
             tile_Left = (row_num,tile_num[0] -1)
-            curentPos = (row_num,tile_num[0])
+            curent_Pos = (row_num,tile_num[0])
 
-            if mapMatrix.item(tile_Above) in connectingTopTiles and mapMatrix.item(tile_Left) in connectingLeftTiles:
-                mapMatrix.itemset(curentPos, 6)
+            if map_Matrix.item(tile_Above) in connecting_Top_Tiles and map_Matrix.item(tile_Left) in connecting_Left_Tiles:
+                map_Matrix.itemset(curent_Pos, 6)
 
-            elif mapMatrix.item(tile_Above) not in connectingTopTiles and mapMatrix.item(tile_Left) in connectingLeftTiles:
-                mapMatrix.itemset(curentPos, random.choice(leftConnectorTiles))
+            elif map_Matrix.item(tile_Above) not in connecting_Top_Tiles and map_Matrix.item(tile_Left) in connecting_Left_Tiles:
+                map_Matrix.itemset(curent_Pos, random.choice(left_Connector_Tiles))
 
-            elif mapMatrix.item(tile_Above) in connectingTopTiles and mapMatrix.item(tile_Left) not in connectingLeftTiles:
-                mapMatrix.itemset(curentPos, random.choice(topConnectorTiles))
+            elif map_Matrix.item(tile_Above) in connecting_Top_Tiles and map_Matrix.item(tile_Left) not in connecting_Left_Tiles:
+                map_Matrix.itemset(curent_Pos, random.choice(top_Connector_Tiles))
 
             else:
-                mapMatrix.itemset(curentPos, random.choice(Neutrals))
+                map_Matrix.itemset(curent_Pos, random.choice(neutral_Tiles))
 
-    #blits to the screen the new random matrix with rules
-    for row_num, row_list in enumerate(mapMatrix):
+    #for loop that blits to the screen each tile number within the modified ruled matrix
+    for row_num, row_list in enumerate(map_Matrix):
         for tile_num in enumerate(row_list):
             load_tile = pygame.image.load(list_of_tiles[tile_num[1]])
             GameWindow.blit(load_tile, (Pos_X, Pos_Y))
@@ -82,12 +75,12 @@ def ReadAndPrintMapMatrix():
             Pos_X += 64
         Pos_Y += 64
         Pos_X = 0
-    print mapMatrix
 
-#GenerateRandomMap()
+    #this will print the matrix in the console
+    #print map_Matrix
 
-ReadAndPrintMapMatrix()
-
+#calls the
+GenerateRandomMap()
 
 #The game window while loop
 Running = True
@@ -98,8 +91,8 @@ while Running:
         if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
             Running = False
 
-    #blits random tiles to the gamewindow on click
-
+    #blits random tiles to the gamewindow on mouse click down
     if event.type == pygame.MOUSEBUTTONDOWN:
-            ReadAndPrintMapMatrix()
+        GenerateRandomMap()
+
     pygame.display.flip()
