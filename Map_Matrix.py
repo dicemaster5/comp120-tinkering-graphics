@@ -3,41 +3,15 @@ import random
 import numpy
 import pygame
 
-# Variables to set the width and height of the game window.
-game_window_width = 64 * 20
-game_window_height = 64 * 12
+from Main import(list_of_tiles, game_window, game_window_height, game_window_width)
 
-# The game window itself.
-game_window = pygame.display.set_mode((game_window_width, game_window_height))
+""" This creates a random map matrix using the numpy array library."""
+map_matrix = numpy.random.randint(11, size=(game_window_height / 64, game_window_width / 64))
 
-# Array for the tiles list in the tiles folder.
-list_of_tiles = []
-
-# takes each tile image from the tiles folder and put them in the tile list.
-for root, dirs, files in os.walk('TilesToBeUsed'):
-    for file in files:
-        if file.endswith('png'):
-            list_of_tiles.append(os.path.join(root, file))
-
-"""
-New map generator, this one works by using a matrix to define
-where it should place the tiles on the game window.
-"""
+"""Sets out the rules for tiles to make roads"""
 
 
-def generate_random_map():
-    # Position X and Y on the game window
-    pos_x = 0
-    pos_y = 0
-
-    # This creates a random map matrix using the numpy array library.
-    map_matrix = numpy.random.randint(11, size=(game_window_height / 64, game_window_width / 64))
-
-    """
-    The Tile rules.
-    This works by checking the tile above and to the left of 
-    the current tile and then deciding on what tile to place down
-    """
+def rules_for_tiles():
     for row_num, row_list in enumerate(map_matrix):
         for tile_num in enumerate(row_list):
 
@@ -61,12 +35,25 @@ def generate_random_map():
                     and map_matrix.item(tile_left) in connecting_left_tiles:
                 map_matrix.itemset(current_pos, random.choice(left_connector_tiles))
 
-            elif map_matrix.item(tile_above) in connecting_top_tiles\
+            elif map_matrix.item(tile_above) in connecting_top_tiles \
                     and map_matrix.item(tile_left) not in connecting_left_tiles:
                 map_matrix.itemset(current_pos, random.choice(top_connector_tiles))
 
             else:
                 map_matrix.itemset(current_pos, random.choice(neutral_tiles))
+
+
+def generate_random_map():
+    # Position X and Y on the game window
+    pos_x = 0
+    pos_y = 0
+    rules_for_tiles()
+
+    """
+    The Tile rules.
+    This works by checking the tile above and to the left of
+    the current tile and then deciding on what tile to place down
+    """
 
     # for loop that blits to the screen each tile number within the modified ruled matrix.
     for row_num, row_list in enumerate(map_matrix):
