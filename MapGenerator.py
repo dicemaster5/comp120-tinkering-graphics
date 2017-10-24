@@ -3,17 +3,17 @@ import random
 import numpy
 import pygame
 
-# Variables to set the width and height of the game window
+# Variables to set the width and height of the game window.
 game_window_width = 64 * 20
 game_window_height = 64 * 12
 
-# The game window itself
+# The game window itself.
 game_window = pygame.display.set_mode((game_window_width, game_window_height))
 
-# Array for the tiles list in the tiles folder
+# Array for the tiles list in the tiles folder.
 list_of_tiles = []
 
-# takes each tile image from the tiles folder and put them in the tile list
+# takes each tile image from the tiles folder and put them in the tile list.
 for root, dirs, files in os.walk('TilesToBeUsed'):
     for file in files:
         if file.endswith('png'):
@@ -26,11 +26,11 @@ where it should place the tiles on the game window.
 
 
 def generate_random_map():
-    # Position X and Y on the game window
+    # Position X and Y on the game window.
     pos_x = 0
     pos_y = 0
 
-    # This creates a random map matrix using the numpy array library
+    # This creates a random map matrix using the numpy array library.
     map_matrix = numpy.random.randint(11, size=(game_window_height / 64, game_window_width / 64))
 
     """
@@ -68,7 +68,7 @@ def generate_random_map():
             else:
                 map_matrix.itemset(current_pos, random.choice(neutral_tiles))
 
-    # for loop that blits to the screen each tile number within the modified ruled matrix
+    # for loop that blits to the screen each tile number within the modified ruled matrix.
     for row_num, row_list in enumerate(map_matrix):
         for tile_num in enumerate(row_list):
             load_tile = pygame.image.load(list_of_tiles[tile_num[1]])
@@ -78,11 +78,11 @@ def generate_random_map():
         pos_y += 64
         pos_x = 0
 
-    # this will print the matrix in the console
+    # this will print the matrix in the console.
     print map_matrix
 
 
-# Generates a random map with a set of rules for paths to stay aligned
+# Generates a random map with a set of rules for paths to stay aligned.
 generate_random_map()
 
 # The game window while loop
@@ -94,7 +94,7 @@ while running:
         if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
             running = False
 
-    # blits random tiles to the gamewindow on mouse click down
+    # blits random tiles to the game window on mouse click down.
     if event.type == pygame.MOUSEBUTTONDOWN:
         generate_random_map()
 
