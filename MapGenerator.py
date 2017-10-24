@@ -26,7 +26,7 @@ where it should place the tiles on the game window.
 
 
 def generate_random_map():
-    # Position X and Y on the game window.
+    # Position X and Y on the game window
     pos_x = 0
     pos_y = 0
 
