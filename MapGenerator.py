@@ -85,7 +85,7 @@ def generate_random_map():
 # Generates a random map with a set of rules for paths to stay aligned.
 generate_random_map()
 
-# The game window while loop
+# The game window while loop.
 running = True
 while running:
     for event in pygame.event.get():
