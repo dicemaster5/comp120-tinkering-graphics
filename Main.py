@@ -1,25 +1,24 @@
-import os
-import random
-import numpy
-import pygame
 
-# Variables to set the width and height of the game window.
-game_window_width = 64 * 20
-game_window_height = 64 * 12
+""" This is getting information from Random_Map """
+from Random_Map import*
 
-# The game window itself.
-game_window = pygame.display.set_mode((game_window_width, game_window_height))
-
-# Array for the tiles list in the tiles folder.
-list_of_tiles = []
-
-# takes each tile image from the tiles folder and put them in the tile list.
-for root, dirs, files in os.walk('TilesToBeUsed'):
-    for file in files:
-        if file.endswith('png'):
-            list_of_tiles.append(os.path.join(root, file))
 
 """
-New map generator, this one works by using a matrix to define
-where it should place the tiles on the game window.
+This is the main file that calls all other files and then keeps
+the game window running.
 """
+
+# The game window while loop.
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+            running = False
+
+    # Generates a new map to the game window on mouse click down.
+    if event.type == pygame.MOUSEBUTTONDOWN:
+        generate_random_map()
+
+    pygame.display.flip()
